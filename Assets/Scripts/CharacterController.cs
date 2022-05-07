@@ -4,58 +4,67 @@ using UnityEngine;
 
 public class CharacterController : MonoBehaviour
 {
-    [SerializeField] private float speed;           //  Скорость бега/ходьбы
-    [SerializeField] private float rotateAngle;     //  Угол поворота
-    [SerializeField] private Animator anim;         //  Аниматор
+    [SerializeField] private float _speed;           //  Скорость бега/ходьбы
+    [SerializeField] private float _rotateAngle;     //  Угол поворота
+    [SerializeField] private Animator _anim;         //  Аниматор
+    private int itsWalk = 0;
 
-    // Start is called before the first frame update
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
         // Движение и повороты
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.W))
         {
-            characterMove(Vector3.forward);
+            CharacterMove(Vector3.forward);
+            ChatacterRotate(-_rotateAngle);
+        }
+        else if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.W))
+        {
+            CharacterMove(Vector3.forward);
+            ChatacterRotate(_rotateAngle);
+        }
+        else if (Input.GetKey(KeyCode.W))
+        {
+            CharacterMove(Vector3.forward);
         }
         else if (Input.GetKey(KeyCode.S))
         {
-            characterMove(Vector3.back);
+            CharacterMove(Vector3.back);
         }
         else if (Input.GetKey(KeyCode.A))
         {
-            chatacterRotate(-rotateAngle);
+            itsWalk = 1;
+            ChatacterRotate(-_rotateAngle);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            chatacterRotate(rotateAngle);
+            itsWalk = 1;
+            ChatacterRotate(_rotateAngle);
         }
         else 
         {
             // Выключение анимаций
-            anim.SetBool("Walk", false);
-            anim.SetBool("Run", false);
+            _anim.SetBool("Walk", false);
+            _anim.SetBool("Run", false);
+            itsWalk = 0;
         }
-
     }
 
     // Бег
-    void characterMove(Vector3 direction)
+    void CharacterMove(Vector3 direction)
     {
-        transform.Translate(direction.normalized * speed * Time.deltaTime);
-        anim.SetBool("Run", true);
-        
-        
+        transform.Translate(direction.normalized * _speed * Time.deltaTime);
+        _anim.SetBool("Run", true);  
     }
 
     // Поворот
-    void chatacterRotate(float rotateValue)
+    void ChatacterRotate(float rotateValue)
     {
         transform.Rotate(0, rotateValue * Time.deltaTime, 0);
-        anim.SetBool("Walk", true);
+        if (itsWalk == 1)
+        {
+            _anim.SetBool("Walk", true);
+        }
     }
+
 }
